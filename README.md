@@ -31,7 +31,29 @@ The architecture is divided into the following strictly governed layers:
 - **No Reverse Calls**: A lower layer (e.g., L4) can never call a higher layer (e.g., L2).
 - **CQRS Fast-Track**: L1 must route through L2 for Writes (Commands), but may call L4 directly for simple Reads (Queries).
 
-### Advanced Hardware & Performance Contracts (SR&ED Approved)
+```mermaid
+graph TD
+  subgraph Flat-4+ Architecture
+    L1[L1: Entry Layer<br/>Routing & API]
+    L2[L2: Coordinator Layer<br/>Zero-GC Context & Flow]
+    L0[L0: Domain Layer<br/>Pure Math/Entities]
+    L3[L3: Molecular Layer<br/>Stateless Pipelines]
+    L4[L4: Atomic Layer<br/>Drivers, I/O, DB, Micro-bursts]
+    U[Utils: Common Layer]
+
+    %% Write/Complex Flow
+    L1 -- Write/Command --> L2
+    L2 -- Pure Logic --> L0
+    L2 -- Orchestrate --> L3
+    L2 -- Direct Action --> L4
+    L3 -- Combine --> L4
+
+    %% CQRS Fast-Track
+    L1 -. CQRS Read/Query .-> L4
+  end
+```
+
+### Advanced Hardware & Performance Contracts
 - **Zero-GC Memory Arena**: For >100Hz real-time systems, dynamic memory allocation (`new`/`malloc`) is strictly forbidden inside the L2 event loop. L1 must pre-allocate an Arena, and L2/L3/L4 must utilize strictly zero-copy, in-place mutation to eliminate GC pauses.
 - **L4 Microsecond Isolation**: All interactions circumventing OS power policies (like App Nap/Modern Standby) via debounced micro-bursts must be strictly jailed within L4.
 
@@ -97,7 +119,29 @@ Pardpro's Flat-4 是一种极其严格、高度确定性的软件架构模式，
 - **禁止反向调用**: 底层（如 L4）绝对不能调用上层（如 L2）。
 - **读写分离快速通道**: 修改数据的操作 (Write) 必须走 `L1 -> L2`；但简单的纯数据查询 (Read) 允许 `L1 -> L4` 直达。
 
-### 高性能与硬件契约 (SR&ED 核心标准)
+```mermaid
+graph TD
+  subgraph Flat-4+ 架构流转图
+    L1[L1: Entry 入口层<br/>路由与环境隔离]
+    L2[L2: Coordinator 协调层<br/>状态机与 Zero-GC 上下文]
+    L0[L0: Domain 领域层<br/>纯业务逻辑与算法]
+    L3[L3: Molecular 组合层<br/>无状态零拷贝管道]
+    L4[L4: Atomic 原子层<br/>物理隔离、I/O 与防抖]
+    U[Utils: Common 通用层]
+
+    %% Write/Complex Flow
+    L1 -- 写操作/复杂指令 --> L2
+    L2 -- 算法计算 --> L0
+    L2 -- 序列组合 --> L3
+    L2 -- 直接调用 --> L4
+    L3 -- 组合驱动 --> L4
+
+    %% CQRS Fast-Track
+    L1 -. CQRS 简单读取查库 .-> L4
+  end
+```
+
+### 高性能与硬件契约
 - **零 GC 内存竞技场 (Zero-GC Arena)**：针对 >100Hz 的实时硬核业务，架构强制规定在 L2 的高频事件循环中**绝对禁止动态内存分配**（如 `new`/`malloc`）。L1 必须在启动时预分配对象池 (Arena)，L2~L4 必须采用零拷贝 (Zero-Copy) 与原地内存覆盖技术，彻底消除垃圾回收停顿。
 - **L4 微秒级物理隔离**：对抗操作系统休眠惩罚（App Nap / Modern Standby）的微秒级轮询与防抖突发机制，必须被死死隔离在 L4 内，绝不污染上层业务循环。
 
