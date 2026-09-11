@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flat-4+ Architect"
+  short_description: "按 Pardpro Flat-4+ 规范设计、审查并验证项目架构"
+  default_prompt: "Use $flat-4-plus-architect to design or audit this project with the Pardpro Flat-4+ architecture."
