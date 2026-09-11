@@ -5,6 +5,12 @@
   <i>The next-generation architecture designed specifically for AI-code generation and extreme hardware constraints.</i>
 </div>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-green.svg" alt="Python">
+  <img src="https://img.shields.io/badge/AI--Native-Pass@1%20%3E85%25-orange.svg" alt="AI-Native">
+</p>
+
 [English](#english) | [中文](#chinese)
 
 ---
