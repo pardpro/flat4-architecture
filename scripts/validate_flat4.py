@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-"""Conservative static dependency checker for Pardpro Flat-4 projects."""
+"""Static dependency screen for legacy Flat-4 Hardware/Realtime projects.
+
+This tool checks recognizable layer references. It does not certify query
+purity, state ownership, I/O purity, lock freedom, allocation behavior, or
+runtime performance.
+"""
 
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 import sys
@@ -40,6 +46,10 @@ REFERENCE_PATTERN = re.compile(
     r"\b(l0_domain|l1_entry|l2_coordinator|l3_molecular|l4_atomic|utils|common)\b"
 )
 CONTROL_FLOW_PATTERN = re.compile(r"(?m)^\s*(if|elif|else|switch|case|for|while)\b")
+L0_IO_MODULES = {
+    "asyncio", "ftplib", "http", "os", "pathlib", "requests", "shutil",
+    "socket", "sqlite3", "subprocess", "urllib",
+}
 
 
 @dataclass(frozen=True)
@@ -81,8 +91,6 @@ def is_source_file(path: Path) -> bool:
     )
 
 
-import ast
-
 def analyze_python_ast(text: str, relative_path: Path, source_layer: str, findings: list[Finding]):
     try:
         tree = ast.parse(text, filename=str(relative_path))
@@ -94,26 +102,57 @@ def analyze_python_ast(text: str, relative_path: Path, source_layer: str, findin
         def visit_Import(self, node):
             for alias in node.names:
                 self.check_reference(alias.name, node.lineno)
+                self.check_l0_io(alias.name, node.lineno)
             self.generic_visit(node)
             
         def visit_ImportFrom(self, node):
             if node.module:
                 self.check_reference(node.module, node.lineno)
+                self.check_l0_io(node.module, node.lineno)
+            for alias in node.names:
+                self.check_reference(alias.name, node.lineno)
             self.generic_visit(node)
             
         def visit_Name(self, node):
             self.check_reference(node.id, node.lineno)
+            if source_layer == "L0" and node.id == "open":
+                findings.append(Finding(
+                    "warning",
+                    "l0-io-review",
+                    str(relative_path),
+                    node.lineno,
+                    "L0 references open(). Review for filesystem I/O; L0 must remain pure.",
+                ))
             self.generic_visit(node)
+
+        def check_l0_io(self, module_name: str, lineno: int):
+            root_module = module_name.split(".", 1)[0].casefold()
+            if source_layer == "L0" and root_module in L0_IO_MODULES:
+                findings.append(Finding(
+                    "warning",
+                    "l0-io-import-review",
+                    str(relative_path),
+                    lineno,
+                    f"L0 imports {module_name}. Review for I/O or runtime coupling; static analysis cannot prove purity.",
+                ))
             
         def check_reference(self, text: str, lineno: int):
             for target_layer in referenced_layers(text):
+                if source_layer == "L1" and target_layer == "L4":
+                    findings.append(Finding(
+                        "warning",
+                        "l1-l4-query-review",
+                        str(relative_path),
+                        lineno,
+                        "L1 references L4. Static analysis cannot prove this is a side-effect-free simple query; review semantics.",
+                    ))
                 if target_layer == source_layer or target_layer not in ALLOWED_TARGETS[source_layer]:
                     findings.append(Finding(
                         "error",
                         "illegal-layer-reference-ast",
                         str(relative_path),
                         lineno,
-                        f"[AST Deep Scan] {source_layer} references {target_layer}; allowed targets: "
+                        f"{source_layer} references {target_layer}; allowed targets: "
                         f"{', '.join(sorted(ALLOWED_TARGETS[source_layer])) or 'none'}.",
                     ))
     
@@ -139,12 +178,20 @@ def scan(root: Path) -> tuple[list[Finding], dict[str, int]]:
             continue
 
         if path.suffix.casefold() == ".py":
-            # Deep AST Scan for Python
+            # AST-assisted import/name screening for Python.
             analyze_python_ast(text, relative, source_layer, findings)
         else:
             # Fallback regex scan for other languages
             for line_number, line in enumerate(text.splitlines(), start=1):
                 for target_layer in referenced_layers(line):
+                    if source_layer == "L1" and target_layer == "L4":
+                        findings.append(Finding(
+                            "warning",
+                            "l1-l4-query-review",
+                            str(relative),
+                            line_number,
+                            "L1 references L4. Static analysis cannot prove this is a side-effect-free simple query; review semantics.",
+                        ))
                     if target_layer == source_layer or target_layer not in ALLOWED_TARGETS[source_layer]:
                         findings.append(Finding(
                             "error",
@@ -171,7 +218,7 @@ def scan(root: Path) -> tuple[list[Finding], dict[str, int]]:
             "no-layered-source",
             ".",
             0,
-            "No source files were found under recognizable L0-L4 directories.",
+            "No source files were found under recognizable legacy Flat-4 layer directories.",
         ))
     else:
         for required in ("L1", "L2", "L4"):
@@ -189,11 +236,11 @@ def scan(root: Path) -> tuple[list[Finding], dict[str, int]]:
 
 
 def print_text(root: Path, findings: list[Finding], counts: dict[str, int]) -> None:
-    print(f"Flat-4 static audit: {root}")
+    print(f"Legacy Flat-4 dependency screen: {root}")
     print("Layered source files: " + ", ".join(f"{key}={value}" for key, value in counts.items()))
     if not findings:
-        print("PASS: no static layer violations found.")
-        print("Manual review is still required for state ownership and behavioral responsibilities.")
+        print("PASS: no static layer-reference violations found.")
+        print("Manual review is still required for semantics, state, side effects, concurrency, and runtime claims.")
         return
     for finding in findings:
         location = finding.file if finding.line == 0 else f"{finding.file}:{finding.line}"

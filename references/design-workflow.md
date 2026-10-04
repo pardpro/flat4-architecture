@@ -1,34 +1,29 @@
-# Flat-4+ Design Workflow
+# F4A Delivery Workflow
 
-## 1. Define Objective & Constraints
-Record user-visible outcomes, and explicitly document extreme constraints (e.g., thermal thresholds <48°C, latency <16ms, OS sleep behaviors, AI Pass@1 targets).
+## 1. Frame
 
-## 2. Design Domain (L0) & Context
-Define pure business data entities and pure mathematical algorithms in **L0 (Domain)**.
-Define the pre-allocated Memory Arena schema that **L2** will hold to satisfy the Zero-GC contract.
+State the user, problem, desired outcome, non-goals, and constraints. Identify the smallest independently valuable change.
 
-## 3. Map the Flow (L2)
-Write the L2 Coordinator state machine:
-1. Receive request from **L1**.
-2. Pre-allocate or reset Context Arena (No `new` inside loops).
-3. Call **L4** atomic driver/API to fetch state.
-4. Pass state to **L0** for pure logic evaluation.
-5. Apply shared Policies (e.g., Thermal Backpressure dropping frames).
-6. Pass results to **L3** stateless pipelines for zero-copy transmission.
+## 2. Select boundaries and profile
 
-## 4. Define L4 Side-Effects
-Strictly isolate all I/O, database access, network calls, and OS microsecond polling into **L4**. Ensure L4 isolates main-thread wait states from the Coordinator loop.
+List deployable subsystems and choose one primary F4A Profile for each. Record trust, data, external-service, and operational boundaries.
 
-## 5. Directory Layout
-```text
-src/
-  L0_Domain/
-  L1_Entry/
-  L2_Coordinator/
-  L3_Molecular/
-  L4_Atomic/
-  Utils/
-```
+## 3. Classify risk
 
-## 6. Audit & Acceptance
-Use the provided `validate_flat4.py` AST scanner. If the AST scan fails or the WPA micro-burst telemetry fails, the design is rejected.
+Use the highest relevant level from [core-governance.md](core-governance.md). Scale the required evidence accordingly.
+
+## 4. Formalize behavior
+
+Define inputs, outputs, permissions, state changes, failure/empty conditions, concurrency, recovery, and acceptance criteria relevant to the profile and risk.
+
+## 5. Decide only what matters
+
+Create an ADR for consequential or costly-to-reverse choices. Include context, considered alternatives, decision, consequences, evidence needed, and reconsideration trigger.
+
+## 6. Implement narrowly
+
+Break work into reviewable units. Keep domain decisions and external effects behind explicit boundaries appropriate to the selected Profile. Do not perform unrelated refactors.
+
+## 7. Verify and learn
+
+Collect proportionate automated and manual evidence. Record remaining uncertainty, observed metrics, rollback readiness, and lessons that should alter future work.

@@ -1,25 +1,24 @@
-# ADR-002: 利用 L3 的无状态特性实现零拷贝流式中间件
+# ADR-002: Prefer stateless pipeline stages in high-frequency streams
 
-**Date**: 2026-XX-XX  
-**Status**: Accepted  
-**Context**: Project A & B / Flat-4 Architecture Core  
+**Status:** Profile-specific; conditional
+**Scope:** Hardware / Realtime streams where state or lock contention is measured as a risk
 
-## 背景与技术不确定性 (Technological Uncertainty)
-我们在开发中面临高频数据流（频率 > 100Hz）的处理需求。在使用标准的状态管理和响应式框架时，出现了极其严重的性能瓶颈：**垃圾回收 (GC) 的随机停顿，以及由于跨线程处理高频事件而导致的锁竞争 (Thread-locking contention)。**
-不确定性在于：我们能否在 Windows, macOS 和 Linux 等非实时操作系统上，设计出一种轻量级、无锁的二进制协议和事件循环，来保证亚毫秒级 (Sub-millisecond) 的同步，并且不发生丢包？
+## Context
 
-## 实验与迭代过程 (Systematic Investigation)
-传统框架（无论是面向对象的多层继承体系，还是常见的 Redux 状态树）由于在中间件中堆积了大量的临时状态对象，导致内存抖动（Memory Churn）急剧上升。
+High-frequency streams can suffer from allocation churn, queue growth, contention, and unclear ownership. Stateless transformations simplify testing and can reduce these risks, but buffers, framing, ordering, and recovery may still require owned state.
 
-在将这些业务往 Flat-4 架构迁移时，我们进行了一系列测试：
-1. 最初，我们试图在 L3（组合层）中保留部分缓冲状态（Buffer State）以便重组数据包，但这依然引发了间歇性的 GC 尖峰，导致画面出现卡顿 (Stuttering)。
-2. 随后，我们彻底切断了 L3 的状态保持能力。将 L3 定义为**“绝对的无状态组合序列”**。数据（二进制流）作为指针或零拷贝引用，单纯地流经 L3，所有的协议解析和防抖逻辑变成了纯函数调用。
-3. 状态只在 L2（基于预分配的定长缓冲池）统一进行。
+## Decision
 
-## 决策 (Decision)
-**强制规定：Flat-4 的 L3 层 (Molecular Layer) 必须完全无状态。严禁在 L3 中引入任何互斥锁 (Mutex)、线程等待，或实例化生命周期长于当前函数调用的复杂对象。**
-L3 仅作为串联多个 L4 调用的“无状态透明管道”。
+Prefer stateless transformation stages. Place necessary state in an explicitly owned session, coordinator, buffer, or runtime component with defined lifecycle and concurrency rules. Do not ban locks or allocation globally; select mechanisms based on measured constraints and correctness requirements.
 
-## 影响与技术进步 (Advancement)
-- **技术突破**：通过这一架构限制，我们成功打造了无锁二进制协议。配合事件循环，保证了跨平台下的亚毫秒级同步，完全消除了 >100Hz 数据流的 GC 停顿和死锁现象。
-- **架构影响**：验证了 Flat-4 规则（“L3 必须无状态且不决定产品策略”）在极致性能调优下的前瞻性。这确立了我们在未来应对超高速通信时的中间件编写标准。
+## Consequences
+
+- Transformation logic remains easier to test and reuse.
+- Stateful runtime concerns become visible rather than hidden inside utility code.
+- Lock-free and zero-copy designs remain optional optimizations requiring profiling and correctness evidence.
+
+## Required evidence
+
+- throughput, latency distribution, allocation, and contention profile;
+- ordering, backpressure, overflow, packet-loss, and recovery tests;
+- proof that any lock-free structure is race-safe on the target runtime.

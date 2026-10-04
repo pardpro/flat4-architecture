@@ -1,4 +1,4 @@
 interface:
-  display_name: "Flat-4+ Architect"
-  short_description: "按 Pardpro Flat-4+ 规范设计、审查并验证项目架构"
-  default_prompt: "Use $flat-4-plus-architect to design or audit this project with the Pardpro Flat-4+ architecture."
+  display_name: "F4A Engineering Governance"
+  short_description: "按风险和运行环境治理 AI 辅助研发与证据链"
+  default_prompt: "Use $f4a-engineering-governance to select the right profile and produce a risk-proportionate, verifiable delivery plan."

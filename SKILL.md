@@ -1,55 +1,49 @@
 ---
-name: flat-4-plus-architect
-description: "Design, implement, document, and audit software using the enhanced Pardpro's Flat-4+ architecture: L0 Domain, L1 Entry, L2 Coordinator, optional L3 Molecular, L4 Atomic, and Utils. Use when the user mentions Flat-4, Flat-4+, Pardpro architecture rules, CQRS fast-track, L0 domain modeling, layer dependency checks, architecture-map generation, or asks where code belongs. Also use when a repository declares it follows Flat-4/Flat-4+."
+name: f4a-engineering-governance
+description: "Apply Pardpro F4A engineering governance when the user explicitly requests F4A, needs architecture Profile selection or risk-proportionate delivery evidence, or works in a repository that declares F4A. Route each deployable subsystem to one primary Profile instead of imposing one universal layer structure. Do not activate for ordinary coding, planning, or review that has no F4A governance context."
 ---
 
-# Flat-4+ Architect
+# F4A Engineering Governance
 
-Apply the enhanced Pardpro's Flat-4+ architecture without forcing it onto unrelated projects. 
+Turn product intent into verifiable outcomes without forcing one code structure onto every project.
 
-## Select the workflow
+## Start with Core
 
-1. Determine whether the user wants design, implementation, documentation, or audit.
-2. Preserve read-only scope when the user asks only for review or a report.
-3. Read [references/architecture-rules.md](references/architecture-rules.md) and [docs/05_Flat4_Plus_Optimization.md](docs/05_Flat4_Plus_Optimization.md) before making placement or dependency decisions.
-4. For new features or architecture documents, read [references/design-workflow.md](references/design-workflow.md).
-5. For audits, read [references/audit-checklist.md](references/audit-checklist.md).
-6. For acceptance planning, read [references/pard-acceptance.md](references/pard-acceptance.md).
+Read [references/core-governance.md](references/core-governance.md). Establish the problem, user, desired outcome, non-goals, deployable subsystem boundaries, change risk, minimum durable evidence, acceptance conditions, and rollback conditions.
 
-## Work L2-first with L0 in mind
+Do not create every possible document for every change. Scale evidence with risk.
 
-1. Describe the user-visible objective and constraints, explicitly including thermal limits, max latency (e.g., <16ms), and OS power-management barriers.
-2. Write the L2 flow, Context, branches, errors, retries, and rollback decisions before implementation.
-3. For core business logic and state transitions, define L0 (Domain) entities and pure functions. L2 should orchestrate calls to L0.
-4. Extract shared business logic across L2s into Policies/Strategies and inject them.
-5. Define every required L3/L4 interface with explicit input, output, and error behavior.
-6. **Hardware & Performance Check**: For L3 interfaces, enforce stateless, lock-free pipelines to avoid GC and thread-locking in high-frequency streams. For L4, isolate OS microsecond polling and power states from main threads.
-7. Use L3 only for a reusable, stateless sequence of tightly related L4 operations.
-8. Implement or place code only after the flow and interfaces are clear.
+## Select one primary profile per deployable subsystem
 
-## Audit with evidence
+Read [references/profile-selection.md](references/profile-selection.md), then load only the selected profile:
 
-1. Inspect repository instructions and the actual directory structure.
-2. Run `scripts/validate_flat4.py <project-path>` when the project is available locally (Note: verify script supports Flat-4+ rules).
-3. Treat scanner findings as evidence, not proof; verify each reported dependency in source.
-4. Check behavioral rules that static scanning cannot prove: especially Context ownership, L0 purity (no I/O), CQRS fast-track correctness, and orchestration inside L4.
-5. Report confirmed violations separately from risks and optional improvements.
-6. Do not modify files unless the user asks for changes.
+- Web products, APIs, subscriptions, teams, and business workflows: [references/saas-profile.md](references/saas-profile.md)
+- Devices, protocols, polling, offline recovery, constrained resources, and realtime behavior: [references/hardware-realtime-profile.md](references/hardware-realtime-profile.md)
+- Agentic workflows, tool use, approvals, memory, and evaluation: [references/ai-agent-profile.md](references/ai-agent-profile.md)
+- Content pipelines, analytics, datasets, and publishing: [references/content-data-profile.md](references/content-data-profile.md)
 
-## Preserve these Flat-4+ invariants
+A monorepo may use multiple profiles, but each independently deployed subsystem must declare one primary profile. Shared F4A Core rules apply across the repository.
 
-- **Command (Write) flows**: Allow `L1 -> L2 -> L4` and `L1 -> L2 -> L3 -> L4`.
-- **Query (Read) fast-track**: Allow `L1 -> L4` exclusively for simple queries without business side-effects.
-- **L0 Domain purity**: L0 must remain free of I/O, network, or external dependencies. It only performs pure memory computations.
-- **Utils accessibility**: `Utils` can be called by any layer (L0-L4), but `Utils` cannot call L0-L4.
-- Keep L3 optional and free of business-flow state.
-- Keep task-level Context and business decisions in L2.
-- Prohibit same-layer calls (except within Utils) and reverse calls.
-- Permit external I/O in L4 when one atomic action is isolated and dependencies are explicit.
+## Work evidence-first
 
-## Present results
+1. Frame the requested outcome and explicit non-goals.
+2. Formalize behavior, boundaries, permissions, failure cases, and acceptance criteria.
+3. Identify system and deployment boundaries before choosing code organization.
+4. Record only decisions that are costly, risky, or difficult to reverse.
+5. Keep each implementation task narrow and name its completion evidence.
+6. Verify successful, empty, failure, permission, concurrency, and recovery paths as relevant.
+7. Record observed results, unresolved risk, and follow-up learning.
 
-- Lead with the architecture decision or ship/no-ship conclusion.
-- Explain placement decisions in plain language (e.g., why a function belongs in L0 vs L4).
-- For a violation, identify caller layer, target layer, violated rule, and smallest correction.
-- State limitations when runtime behavior or dynamic imports prevent confirmation.
+Use `AGENTS.md`, ADRs, C4-style diagrams, specifications, tests, CI, and telemetry as possible carriers of evidence, not as mandatory brands or formats.
+
+## Audit without overclaiming
+
+- Preserve read-only scope when the user asks for review or a report.
+- Separate confirmed findings, tool warnings, assumptions, and unverified risks.
+- Do not claim that architecture eliminates AI errors, provides hard realtime behavior, or proves performance without measured evidence.
+- For Hardware / Realtime projects using the legacy Flat-4 layer convention, run `scripts/validate_flat4.py <project-path>` as a dependency-screening aid. Read [references/flat4-layer-rules.md](references/flat4-layer-rules.md) first.
+- Treat a clean static scan as supporting evidence only; it cannot prove semantics, query purity, lock freedom, memory allocation, latency, thermal behavior, or operating-system scheduling.
+
+## Present the result
+
+Lead with the selected subsystem and primary profile, risk level and required evidence, architecture or audit decision, verified evidence and remaining uncertainty, and smallest safe next action.

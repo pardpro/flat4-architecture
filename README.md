@@ -1,190 +1,124 @@
-# Pardpro's Flat-4 (Flat-4+) Architecture 🚀
+# F4A — AI-Native Engineering Governance
 
-<div align="center">
-  <b>Built with ❤️ by <a href="https://pardpro.ca">PARDPRO TECHNOLOGIES LTD.</a></b><br>
-  <i>The next-generation architecture designed specifically for AI-code generation and extreme hardware constraints.</i>
-</div>
+F4A is Pardpro's engineering governance and evidence-chain system for turning product intent into verifiable software and hardware outcomes.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
-  <img src="https://img.shields.io/badge/Python-3.8%2B-green.svg" alt="Python">
-  <img src="https://img.shields.io/badge/AI--Native-Pass@1%20%3E85%25-orange.svg" alt="AI-Native">
-</p>
+F4A does **not** impose one universal code structure. It combines specification-first delivery, explicit system boundaries, durable decisions, AI-agent rules, automated verification, and architecture Profiles selected for each deployable subsystem.
 
-[English](#english) | [中文](#chinese)
+F4A originated as **Flat-4 Architecture**. The name is now retained as the product brand while the original layer model continues as an optional Hardware / Realtime convention.
 
----
+## Model
 
-<a id="english"></a>
-## 🇬🇧 English
+```text
+F4A Core
+  Frame → Formalize → Architect → Decide → Implement → Verify → Learn
 
-### What is Flat-4 Architecture?
-Pardpro's Flat-4 is an incredibly strict, highly-deterministic software architecture pattern designed to eliminate "spaghetti code", cyclic dependencies, and unclear responsibilities. 
-
-The enhanced **Flat-4+** version introduces Domain-Driven Design (DDD) concepts and Command Query Responsibility Segregation (CQRS) to balance strictness with development efficiency.
-
-### Core Architecture Layers
-The architecture is divided into the following strictly governed layers:
-1. **L0 (Domain Layer)**: Pure data structures, entities, and business algorithms. No I/O, network, or DB calls allowed.
-2. **L1 (Entry Layer)**: The entry point (e.g., API Controllers, CLI commands). Responsible for request parsing and environment setup. No business logic allowed.
-3. **L2 (Coordinator Layer)**: The heart of the application. Owns the task Context, business decisions, branches, and orchestrates L0, L3, and L4.
-4. **L3 (Molecular Layer)**: (Optional) Stateless sequences of tightly related L4 operations. No product-level policy branching.
-5. **L4 (Atomic Layer)**: Single, isolated side-effects or I/O operations (e.g., DB queries, network requests).
-6. **Utils (Common Layer)**: Pure technical functions (e.g., date formatting) accessible by all layers.
-
-### The Ironclad Dependency Rules
-- **No Same-Layer Calls**: L2 cannot call L2, L4 cannot call L4.
-- **No Reverse Calls**: A lower layer (e.g., L4) can never call a higher layer (e.g., L2).
-- **CQRS Fast-Track**: L1 must route through L2 for Writes (Commands), but may call L4 directly for simple Reads (Queries).
-
-```mermaid
-graph TD
-  subgraph Flat-4+ Architecture
-    L1[L1: Entry Layer<br/>Routing & API]
-    L2[L2: Coordinator Layer<br/>Zero-GC Context & Flow]
-    L0[L0: Domain Layer<br/>Pure Math/Entities]
-    L3[L3: Molecular Layer<br/>Stateless Pipelines]
-    L4[L4: Atomic Layer<br/>Drivers, I/O, DB, Micro-bursts]
-    U[Utils: Common Layer]
-
-    %% Write/Complex Flow
-    L1 -- Write/Command --> L2
-    L2 -- Pure Logic --> L0
-    L2 -- Orchestrate --> L3
-    L2 -- Direct Action --> L4
-    L3 -- Combine --> L4
-
-    %% CQRS Fast-Track
-    L1 -. CQRS Read/Query .-> L4
-  end
+F4A Profiles
+  SaaS / Web App
+  Hardware / Realtime
+  AI Agent
+  Content / Data
 ```
 
-### Advanced Hardware & Performance Contracts
-- **Zero-GC Memory Arena**: For >100Hz real-time systems, dynamic memory allocation (`new`/`malloc`) is strictly forbidden inside the L2 event loop. L1 must pre-allocate an Arena, and L2/L3/L4 must utilize strictly zero-copy, in-place mutation to eliminate GC pauses.
-- **L4 Microsecond Isolation**: All interactions circumventing OS power policies (like App Nap/Modern Standby) via debounced micro-bursts must be strictly jailed within L4.
+Every repository shares F4A Core. Each independently deployed subsystem declares one Primary Profile. A monorepo may contain several Profiles, but one code unit should not obey two incompatible primary structures.
 
-| Caller | May call | Must not call |
-| --- | --- | --- |
-| L1 | L2, L4 (Query only), Utils | L1, L3, L0 |
-| L2 | L3, L4, L0, Utils, Policies | L1, L2 |
-| L3 | L4, Utils | L1, L2, L3, L0 |
-| L4 | Utils | L1, L2, L3, L4, L0 |
-| L0 | Utils | L1, L2, L3, L4, L0 |
-| Utils | Utils | L0, L1, L2, L3, L4 |
+## Core principles
 
-### 🌟 When to use Flat-4+ (The God-Tier Fit)
-- **Hardware Integration, IoT, & Robotics**: When you need to isolate hardware polling, thermal limits, and erratic OS sleep behaviors from business logic.
-- **AI-Native Code Generation**: Flat-4 is heavily deterministic. It provides AI agents (Cursor, Claude) with confined contexts, boosting first-pass (Pass@1) generation success rates to >85%.
-- **Complex Domain & Financial Systems**: When you must strictly isolate the core algorithm (L0) from databases and network I/O.
+- Make product intent and non-goals explicit.
+- Scale evidence with risk instead of generating documentation mechanically.
+- Make trust, data, deployment, and external-service boundaries visible.
+- Treat AI output as untrusted until schemas, permissions, and business rules validate it.
+- Keep changes narrow, reviewable, verifiable, and recoverable.
+- Separate measured evidence from hypotheses and architectural intent.
+- Preserve durable knowledge outside chat history.
 
-### ❌ When NOT to use Flat-4+ (The Anti-Patterns)
-- **Simple CRUD Websites**: If you are building a straightforward data-entry website, standard MVC (e.g., Django, Rails, Next.js) is significantly faster. Flat-4+ will introduce unnecessary boilerplate.
-- **Pure Frontend/UI Development**: Modern UI libraries (React, Vue, SwiftUI) rely on declarative component trees. Forcing Flat-4's L1-L4 layers into UI rendering is an anti-pattern.
-- **One-off Scripts or Big Data Pipelines**: Data engineering pipelines (Spark, Hadoop) rely on map-reduce and functional chains, not L2 state orchestrators.
+## Profiles
 
-### How to Use This Repository
+### SaaS / Web App
 
-This repository acts as an **AI Agent Skill / Architecture Toolkit**.
+Use domain-oriented modules, explicit adapters, server-authoritative permissions, safe migrations, observability, and validated AI boundaries. Prefer a modular monolith until distribution is justified.
 
-1. **For AI Agents (Cursor, Claude, Gemini, etc.)**: 
-   Load the `SKILL.md` file into your AI assistant. The AI will then act as your strict Flat-4 Architect, helping you design code, refactor existing code, and generate Architecture maps.
-2. **For Automated Auditing (AST-based)**:
-   Use the Python static scanner to enforce the rules in your CI/CD pipeline. The tool now features a **Deep AST (Abstract Syntax Tree) Parsing** engine for Python source code, offering compiler-level dependency validation rather than basic regex matching.
-   ```bash
-   python scripts/validate_flat4.py /path/to/your/project
-   ```
-3. **For Manual Code Review**:
-   Check the `references/` directory for detailed design workflows, architecture rules, and audit checklists.
-4. **For Architecture Evaluation & SR&ED Compliance**:
-   Refer to [`docs/06_Evaluation_Metrics.md`](docs/06_Evaluation_Metrics.md) to benchmark AI Pass@1 success rates and hardware CPU wake-up metrics. You can run the included simulation proof-of-concept:
-   ```bash
-   python scripts/simulate_l4_microburst.py
-   ```
+### Hardware / Realtime
 
----
+Use explicit protocol, state, scheduling, resource, driver, and recovery boundaries. Legacy Flat-4 layers remain available as an optional convention. Realtime, thermal, power, lock-free, and zero-allocation claims require target-environment evidence.
 
-<a id="chinese"></a>
-## 🇨🇳 中文
+### AI Agent
 
-### 什么是 Flat-4 架构？
-Pardpro's Flat-4 是一种极其严格、高度确定性的软件架构模式，旨在彻底消除“面条代码”、循环依赖以及职责不清的问题。
+Separate intent, planning, tool execution, approval, memory, and verification. Apply least privilege, structured validation, bounded retries, provenance, and task-specific evaluations.
 
-增强版的 **Flat-4+** 引入了领域驱动设计 (DDD) 的纯函数概念和 CQRS (命令查询职责分离)，在保持严格防腐的同时，兼顾了日常开发的效率。
+### Content / Data
 
-### 核心架构分层
-代码被严格划分为以下层级：
-1. **L0 (Domain 领域层)**: 纯数据结构、实体和业务算法。绝对禁止任何 I/O、网络或数据库调用。
-2. **L1 (Entry 入口层)**: 系统的入口（如 API Controller、CLI 命令）。只负责请求解析和环境初始化，禁止包含业务逻辑。
-3. **L2 (Coordinator 协调层)**: 业务的心脏。持有任务上下文 (Context)，负责分支决策、状态流转，并负责编排 L0、L3 和 L4。
-4. **L3 (Molecular 组合层)**: (可选) 无状态的、可复用的 L4 操作序列。不能包含产品级的业务分支策略。
-5. **L4 (Atomic 原子层)**: 单一的、隔离的外部副作用或 I/O 操作（如查库、发请求）。
-6. **Utils (Common 通用层)**: 纯技术型工具函数（如日期格式化），所有层都可以调用。
+Separate sources, ingestion, transformation, storage, analysis, and publication. Preserve provenance, schema versions, quality checks, lineage, and reprocessing or rollback paths.
 
-### 铁律级别的依赖控制
-- **禁止同层调用**: L2 绝对不能调用 L2，L4 绝对不能调用 L4。
-- **禁止反向调用**: 底层（如 L4）绝对不能调用上层（如 L2）。
-- **读写分离快速通道**: 修改数据的操作 (Write) 必须走 `L1 -> L2`；但简单的纯数据查询 (Read) 允许 `L1 -> L4` 直达。
+## Repository contents
 
-```mermaid
-graph TD
-  subgraph Flat-4+ 架构流转图
-    L1[L1: Entry 入口层<br/>路由与环境隔离]
-    L2[L2: Coordinator 协调层<br/>状态机与 Zero-GC 上下文]
-    L0[L0: Domain 领域层<br/>纯业务逻辑与算法]
-    L3[L3: Molecular 组合层<br/>无状态零拷贝管道]
-    L4[L4: Atomic 原子层<br/>物理隔离、I/O 与防抖]
-    U[Utils: Common 通用层]
+- [`SKILL.md`](SKILL.md): Codex Skill that selects risk and Profile before applying rules.
+- [`references/`](references): F4A Core, Profile definitions, audit and acceptance guidance.
+- [`docs/`](docs): Product templates, architecture map, test strategy, metrics, and historical decisions.
+- [`scripts/validate_flat4.py`](scripts/validate_flat4.py): Optional static dependency screen for Hardware / Realtime projects using legacy Flat-4 layers.
+- [`scripts/simulate_l4_microburst.py`](scripts/simulate_l4_microburst.py): Educational batching model, not target-system performance proof.
 
-    %% Write/Complex Flow
-    L1 -- 写操作/复杂指令 --> L2
-    L2 -- 算法计算 --> L0
-    L2 -- 序列组合 --> L3
-    L2 -- 直接调用 --> L4
-    L3 -- 组合驱动 --> L4
+## Install the Skill
 
-    %% CQRS Fast-Track
-    L1 -. CQRS 简单读取查库 .-> L4
-  end
+The install folder must be named `f4a-engineering-governance`.
+
+### One project only
+
+Extract the release archive into the target repository so the result is:
+
+```text
+<project>/.agents/skills/f4a-engineering-governance/
+  SKILL.md
+  agents/
+  references/
+  scripts/
 ```
 
-### 高性能与硬件契约
-- **零 GC 内存竞技场 (Zero-GC Arena)**：针对 >100Hz 的实时硬核业务，架构强制规定在 L2 的高频事件循环中**绝对禁止动态内存分配**（如 `new`/`malloc`）。L1 必须在启动时预分配对象池 (Arena)，L2~L4 必须采用零拷贝 (Zero-Copy) 与原地内存覆盖技术，彻底消除垃圾回收停顿。
-- **L4 微秒级物理隔离**：对抗操作系统休眠惩罚（App Nap / Modern Standby）的微秒级轮询与防抖突发机制，必须被死死隔离在 L4 内，绝不污染上层业务循环。
+Open that project in Codex and invoke:
 
-| 调用方 | 允许调用 | 严禁调用 |
-| --- | --- | --- |
-| L1 | L2, L4 (仅限查询), Utils | L1, L3, L0 |
-| L2 | L3, L4, L0, Utils, Policies | L1, L2 |
-| L3 | L4, Utils | L1, L2, L3, L0 |
-| L4 | Utils | L1, L2, L3, L4, L0 |
-| L0 | Utils | L1, L2, L3, L4, L0 |
-| Utils | 同层其他 Utils | L0, L1, L2, L3, L4 |
+```text
+$f4a-engineering-governance
+```
 
-### 🌟 最佳适用场景 (神级契合)
-- **软硬件结合项目（IoT、机器人、边缘计算）**：极其适合需要处理硬件轮询、对抗 OS 休眠、并有严苛散热和延迟要求（<16ms）的硬核设备。
-- **AI 辅助编程 (AI-Native)**：Flat-4+ 规矩极其严格，能将大语言模型 (LLM) 的上下文收敛到极致。它能让 AI 的首发代码通过率 (Pass@1) 达到 85% 以上，绝不产生幻觉。
-- **复杂的纯业务/科学计算系统**：L0 层能将最核心、最值钱的算法逻辑死死保护起来，隔绝一切网络和数据库的脏水。
+### Personal installation
 
-### ❌ 适用反面教材 (杀鸡用牛刀)
-- **普通的 CRUD 网站 / 后台管理**：如果你只是做个填表单存数据库的系统，用常规的 MVC（如 Django, Next.js）会快得多，强上 Flat-4+ 纯属增加样板代码。
-- **纯前端/UI 界面开发**：React, Vue, SwiftUI 等讲究的是“声明式组件树”。把 Flat-4 强行套用在前端纯视图渲染上是非常别扭的，请放过它。
-- **一次性的数据处理脚本或大数据管线**：大数据流（如 Spark）讲究 Map-Reduce 和函数式流，不需要 L2 这种重度状态机来做编排。
+Extract the same folder into:
 
-### 如何使用本工具包
+```text
+~/.agents/skills/f4a-engineering-governance/
+```
 
-这个仓库是一个完整的 **AI Agent 架构师技能包** 和 **静态审计工具**。
+Codex detects Skill changes automatically; restart Codex if it does not appear.
 
-1. **让 AI 成为你的架构师**：
-   在你的 AI 开发助手（如 Cursor, Claude, Gemini）中加载或复制 `SKILL.md` 的内容。AI 会自动掌握 Flat-4+ 的精髓，帮你从零设计模块、重构旧代码、生成架构图。
-2. **自动化代码审计与编译级检测 (CI/CD)**：
-   使用提供的 Python 脚本进行依赖扫描。该脚本内建了 **AST (抽象语法树) 解析引擎**，面对 Python 等项目时，能像真正的编译器一样精准定位跨层函数调用和导入，而非简单的正则表达式。
-   ```bash
-   python scripts/validate_flat4.py /path/to/your/project
-   ```
-3. **人工 Code Review 参考**：
-   阅读 `references/` 目录下的设计工作流 (`design-workflow.md`) 和人工审计清单 (`audit-checklist.md`)，用于规范团队的代码审查标准。
-4. **架构跑分与 SR&ED 评估标准**：
-   参考 [`docs/06_Evaluation_Metrics.md`](docs/06_Evaluation_Metrics.md) 查看如何评估“AI 首次生成通过率”以及“操作系统唤醒/防抖效能”。你也可以直接运行以下概念验证 (PoC) 模拟器：
-   ```bash
-   python scripts/simulate_l4_microburst.py
-   ```
+## Test and package
+
+Run the repository checks:
+
+```bash
+python -m unittest discover -s tests -v
+python scripts/package_release.py
+```
+
+The packaging command reads `VERSION` and creates a reproducible archive under `dist/`. Generated archives are intentionally not committed; publish them as release assets so source history and release artifacts stay separate.
+
+## Important boundaries
+
+- Architecture reduces error propagation; it does not eliminate AI mistakes.
+- A static scan supports review; it does not certify semantic correctness.
+- Software structure does not create hard realtime guarantees or bypass operating-system scheduling.
+- Numeric thresholds belong to product specifications and measured acceptance evidence, not universal F4A rules.
+
+## 中文简介
+
+F4A 是 Pardpro 面向 AI 辅助研发的工程治理与证据链体系，用于把产品意图转化为可验证的软件与硬件成果。
+
+F4A 不强制所有项目采用同一代码分层。所有项目共享 F4A Core；每个可独立部署的子系统根据运行责任选择一个 Primary Profile：SaaS、Hardware / Realtime、AI Agent 或 Content / Data。
+
+F4A 的核心不是“目录必须长什么样”，而是确保需求、边界、关键决策、实现范围、验证证据和复盘能够被人和 AI 持续理解。原有 Flat-4 严格分层被保留为 Hardware / Realtime Profile 的可选实现，而不再作为所有 SaaS 的通用宪法。
+
+F4A 起源于 Flat-4 Architecture。现在 F4A 作为产品品牌继续使用，而最初的 Flat-4 分层成为 Hardware / Realtime Profile 下的可选约定。
+
+安装时，将发行包中的 `f4a-engineering-governance` 文件夹完整解压到项目的 `.agents/skills/`，或个人目录的 `~/.agents/skills/`，然后在 Codex 中调用 `$f4a-engineering-governance`。
+
+## License
+
+MIT © 2026 PARDPRO TECHNOLOGIES LTD.
