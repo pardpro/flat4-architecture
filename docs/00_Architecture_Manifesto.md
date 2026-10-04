@@ -1,25 +1,25 @@
-# F4A 工程治理宣言
+# F4A Engineering Governance Manifesto
 
-## 为什么存在
+## Why F4A exists
 
-AI 辅助开发提高了实现速度，也放大了错误理解、跨模块耦合、遗漏失败路径、知识散落和决策失忆的风险。F4A 的目标不是让 AI 永不犯错，而是让错误更早暴露、影响范围更小、决策可追溯、结果可验证。
+AI-assisted development increases implementation speed, but it can also amplify misunderstood requirements, cross-module coupling, missing failure paths, fragmented knowledge, and forgotten decisions. F4A does not aim to make AI infallible. It aims to expose errors earlier, reduce their blast radius, preserve decision history, and make outcomes verifiable.
 
-## F4A 是什么
+## What F4A is
 
-F4A 是从产品意图到运行结果的治理与证据链：
+F4A is a governance and evidence chain from product intent to operational outcome:
 
-1. Frame：明确问题、用户、结果和非目标。
-2. Formalize：定义行为、边界、权限、失败与验收条件。
-3. Architect：明确系统、部署、数据和信任边界。
-4. Decide：记录重要且难以逆转的选择。
-5. Implement：限制单次改动范围并定义完成证据。
-6. Verify：验证功能、安全、恢复和回归。
-7. Learn：沉淀指标、假设变化和技术债。
+1. **Frame:** Define the problem, user, desired outcome, and non-goals.
+2. **Formalize:** Define behavior, boundaries, permissions, failure cases, and acceptance criteria.
+3. **Architect:** Define system, deployment, data, and trust boundaries.
+4. **Decide:** Record consequential and difficult-to-reverse choices.
+5. **Implement:** Constrain each change and name its completion evidence.
+6. **Verify:** Validate function, safety, recovery, and regression behavior.
+7. **Learn:** Preserve observed metrics, changed assumptions, and technical debt.
 
-F4A 可以使用 AGENTS.md、规格、C4 风格图、ADR、测试、CI 和遥测作为载体，但不绑定某个工具品牌或固定文件数量。
+F4A may use `AGENTS.md`, specifications, C4-style diagrams, ADRs, tests, CI, and telemetry as evidence carriers. It does not mandate a particular tool brand or a fixed number of documents.
 
-## Profile 原则
+## Profile principle
 
-不同运行环境需要不同的代码组织和质量门禁。SaaS 不应被硬件分层绑架，设备系统也不应按普通 CRUD 的标准治理。因此，每个可部署子系统选择一个 Primary Profile，并共享 F4A Core。
+Different runtime environments need different code organizations and quality gates. SaaS systems should not be forced into hardware-oriented layers, and device systems should not be governed like ordinary CRUD applications. Each deployable subsystem therefore selects one Primary Profile while sharing F4A Core.
 
-原有 Flat-4 分层仍然有价值，但其主要归属是 Hardware / Realtime Profile。它降低依赖扩散并提升状态、协议和副作用的可审查性；它不自动提供 hard realtime、零故障或 AI 零幻觉保证。
+The original Flat-4 layer convention remains valuable, primarily within the Hardware / Realtime Profile. It can reduce dependency spread and improve the reviewability of state, protocol, and side effects. It does not automatically provide hard realtime behavior, zero defects, or error-free AI output.

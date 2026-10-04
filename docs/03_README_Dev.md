@@ -1,5 +1,11 @@
 # F4A Developer Guide
 
+## Language policy
+
+- Keep all Git-tracked documentation, ADRs, Skill instructions, release notes, and developer-facing comments in English.
+- Store optional Chinese working copies only under `.local/zh/`; they are local references, not canonical sources.
+- Run `python scripts/check_english_docs.py` before committing documentation changes.
+
 ## Before implementation
 
 1. Read repository instructions and the relevant specification.

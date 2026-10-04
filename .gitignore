@@ -7,3 +7,4 @@ __pycache__/
 Thumbs.db
 
 /dist/
+/.local/

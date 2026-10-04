@@ -94,6 +94,7 @@ Codex detects Skill changes automatically; restart Codex if it does not appear.
 Run the repository checks:
 
 ```bash
+python scripts/check_english_docs.py
 python -m unittest discover -s tests -v
 python scripts/package_release.py
 ```
@@ -106,18 +107,6 @@ The packaging command reads `VERSION` and creates a reproducible archive under `
 - A static scan supports review; it does not certify semantic correctness.
 - Software structure does not create hard realtime guarantees or bypass operating-system scheduling.
 - Numeric thresholds belong to product specifications and measured acceptance evidence, not universal F4A rules.
-
-## 中文简介
-
-F4A 是 Pardpro 面向 AI 辅助研发的工程治理与证据链体系，用于把产品意图转化为可验证的软件与硬件成果。
-
-F4A 不强制所有项目采用同一代码分层。所有项目共享 F4A Core；每个可独立部署的子系统根据运行责任选择一个 Primary Profile：SaaS、Hardware / Realtime、AI Agent 或 Content / Data。
-
-F4A 的核心不是“目录必须长什么样”，而是确保需求、边界、关键决策、实现范围、验证证据和复盘能够被人和 AI 持续理解。原有 Flat-4 严格分层被保留为 Hardware / Realtime Profile 的可选实现，而不再作为所有 SaaS 的通用宪法。
-
-F4A 起源于 Flat-4 Architecture。现在 F4A 作为产品品牌继续使用，而最初的 Flat-4 分层成为 Hardware / Realtime Profile 下的可选约定。
-
-安装时，将发行包中的 `f4a-engineering-governance` 文件夹完整解压到项目的 `.agents/skills/`，或个人目录的 `~/.agents/skills/`，然后在 Codex 中调用 `$f4a-engineering-governance`。
 
 ## License
 

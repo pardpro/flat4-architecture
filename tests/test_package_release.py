@@ -19,7 +19,8 @@ class PackageReleaseTests(unittest.TestCase):
             (root / "references").mkdir()
             (root / "references/rules.md").write_text("# Rules\n", encoding="utf-8")
             (root / "scripts").mkdir()
-            (root / "scripts/tool.py").write_text("pass\n", encoding="utf-8")
+            (root / "scripts/validate_flat4.py").write_text("pass\n", encoding="utf-8")
+            (root / "scripts/package_release.py").write_text("pass\n", encoding="utf-8")
 
             archive_path, digest = build_release(root)
 
@@ -29,6 +30,8 @@ class PackageReleaseTests(unittest.TestCase):
                 names = set(archive.namelist())
                 self.assertIn(f"{SKILL_NAME}/SKILL.md", names)
                 self.assertIn(f"{SKILL_NAME}/agents/openai.yaml", names)
+                self.assertIn(f"{SKILL_NAME}/scripts/validate_flat4.py", names)
+                self.assertNotIn(f"{SKILL_NAME}/scripts/package_release.py", names)
 
 
 if __name__ == "__main__":

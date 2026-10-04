@@ -11,6 +11,7 @@ from pathlib import Path
 SKILL_NAME = "f4a-engineering-governance"
 INCLUDED_FILES = ("SKILL.md", "VERSION")
 INCLUDED_DIRECTORIES = ("agents", "references", "scripts")
+RELEASE_SCRIPT_NAMES = {"simulate_l4_microburst.py", "validate_flat4.py"}
 EXCLUDED_PARTS = {"__pycache__"}
 EXCLUDED_SUFFIXES = {".pyc", ".pyo"}
 ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
@@ -24,6 +25,7 @@ def release_files(root: Path) -> list[Path]:
         path for path in files
         if not EXCLUDED_PARTS.intersection(path.parts)
         and path.suffix.casefold() not in EXCLUDED_SUFFIXES
+        and (path.parent.name != "scripts" or path.name in RELEASE_SCRIPT_NAMES)
     )
 
 

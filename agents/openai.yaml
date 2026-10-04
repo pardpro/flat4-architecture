@@ -1,4 +1,4 @@
 interface:
   display_name: "F4A Engineering Governance"
-  short_description: "按风险和运行环境治理 AI 辅助研发与证据链"
+  short_description: "Govern AI-assisted delivery by risk and runtime profile"
   default_prompt: "Use $f4a-engineering-governance to select the right profile and produce a risk-proportionate, verifiable delivery plan."
