@@ -1,7 +1,7 @@
 # F4A — AI-Native Engineering Governance
 
 [![Quality](https://github.com/pardpro/flat4-architecture/actions/workflows/quality.yml/badge.svg)](https://github.com/pardpro/flat4-architecture/actions/workflows/quality.yml)
-[![Version](https://img.shields.io/badge/version-0.2.1-2563eb)](VERSION)
+[![Version](https://img.shields.io/badge/version-0.2.2-2563eb)](VERSION)
 [![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![CI: Python 3.11](https://img.shields.io/badge/CI-Python%203.11-3776ab?logo=python&logoColor=white)](.github/workflows/quality.yml)
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827)](SKILL.md)
@@ -106,8 +106,8 @@ F4A identifies the subsystem and risk first, then loads only the required Profil
 - [`SKILL.md`](SKILL.md): Skill entry point for risk assessment and Profile selection.
 - [`references/`](references): F4A Core, Profile, audit, and acceptance guidance.
 - [`docs/`](docs): Product documentation, architecture map, test strategy, metrics, and historical decisions.
-- [`scripts/validate_flat4.py`](scripts/validate_flat4.py): Optional static dependency checker for projects using the legacy Flat-4 layer convention.
-- [`scripts/simulate_l4_microburst.py`](scripts/simulate_l4_microburst.py): Educational batching model; it is not proof of target-device performance.
+- [`scripts/hardware_realtime/validate_flat4.py`](scripts/hardware_realtime/validate_flat4.py): Optional static dependency checker for projects using the legacy Flat-4 layer convention.
+- [`scripts/hardware_realtime/simulate_l4_microburst.py`](scripts/hardware_realtime/simulate_l4_microburst.py): Educational batching model; it is not proof of target-device performance.
 - [`tests/`](tests): Tests for language policy, the dependency checker, the simulator, and release packaging.
 
 ### Verify and package
@@ -116,6 +116,7 @@ GitHub Actions automatically runs the documentation policy check and unit tests.
 
 ```bash
 python scripts/check_english_docs.py
+ruff check .
 python -m unittest discover -s tests -v
 python scripts/package_release.py
 ```
@@ -226,8 +227,8 @@ F4A 会先识别子系统和风险，再加载所需 Profile。它不会机械�
 - [`SKILL.md`](SKILL.md)：Skill 入口，负责风险判断与 Profile 选择。
 - [`references/`](references)：F4A Core、Profile、审计与验收规则。
 - [`docs/`](docs)：产品说明、架构图、测试策略、指标和历史决策。
-- [`scripts/validate_flat4.py`](scripts/validate_flat4.py)：面向旧版 Flat-4 分层项目的可选静态依赖检查器。
-- [`scripts/simulate_l4_microburst.py`](scripts/simulate_l4_microburst.py)：教学用途的批处理模型，不代表目标设备性能证明。
+- [`scripts/hardware_realtime/validate_flat4.py`](scripts/hardware_realtime/validate_flat4.py)：面向旧版 Flat-4 分层项目的可选静态依赖检查器。
+- [`scripts/hardware_realtime/simulate_l4_microburst.py`](scripts/hardware_realtime/simulate_l4_microburst.py)：教学用途的批处理模型，不代表目标设备性能证明。
 - [`tests/`](tests)：语言策略、依赖检查器、模拟器和发行打包测试。
 
 ### 验证与打包
@@ -236,6 +237,7 @@ F4A 会先识别子系统和风险，再加载所需 Profile。它不会机械�
 
 ```bash
 python scripts/check_english_docs.py
+ruff check .
 python -m unittest discover -s tests -v
 python scripts/package_release.py
 ```

@@ -41,7 +41,7 @@ Use `AGENTS.md`, ADRs, C4-style diagrams, specifications, tests, CI, and telemet
 - Preserve read-only scope when the user asks for review or a report.
 - Separate confirmed findings, tool warnings, assumptions, and unverified risks.
 - Do not claim that architecture eliminates AI errors, provides hard realtime behavior, or proves performance without measured evidence.
-- For Hardware / Realtime projects using the legacy Flat-4 layer convention, run `scripts/validate_flat4.py <project-path>` as a dependency-screening aid. Read [references/flat4-layer-rules.md](references/flat4-layer-rules.md) first.
+- For Hardware / Realtime projects using the legacy Flat-4 layer convention, run `scripts/hardware_realtime/validate_flat4.py <project-path>` as a dependency-screening aid. Read [references/flat4-layer-rules.md](references/flat4-layer-rules.md) first.
 - Treat a clean static scan as supporting evidence only; it cannot prove semantics, query purity, lock freedom, memory allocation, latency, thermal behavior, or operating-system scheduling.
 
 ## Present the result

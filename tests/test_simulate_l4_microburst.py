@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from scripts.simulate_l4_microburst import estimate
+from scripts.hardware_realtime.simulate_l4_microburst import estimate
 
 
 class MicroburstModelTests(unittest.TestCase):

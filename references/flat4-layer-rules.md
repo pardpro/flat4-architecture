@@ -20,4 +20,4 @@ Same-layer and reverse calls are prohibited except between Utils. L3 remains opt
 - `L1 -> L4` cannot be proven safe from import direction alone; review query semantics and side effects.
 - L0 purity requires semantic review for I/O and hidden state.
 - Zero-allocation, lock freedom, latency, temperature, power, and scheduling are optional product contracts that require runtime evidence.
-- Run `scripts/validate_flat4.py` only as a static dependency screen. A pass is not architectural certification.
+- Run `scripts/hardware_realtime/validate_flat4.py` only as a static dependency screen. A pass is not architectural certification.

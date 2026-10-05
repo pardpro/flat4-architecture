@@ -18,8 +18,13 @@ class PackageReleaseTests(unittest.TestCase):
             (root / "agents/openai.yaml").write_text("interface: {}\n", encoding="utf-8")
             (root / "references").mkdir()
             (root / "references/rules.md").write_text("# Rules\n", encoding="utf-8")
-            (root / "scripts").mkdir()
-            (root / "scripts/validate_flat4.py").write_text("pass\n", encoding="utf-8")
+            (root / "scripts/hardware_realtime").mkdir(parents=True)
+            (root / "scripts/hardware_realtime/validate_flat4.py").write_text(
+                "pass\n", encoding="utf-8"
+            )
+            (root / "scripts/hardware_realtime/simulate_l4_microburst.py").write_text(
+                "pass\n", encoding="utf-8"
+            )
             (root / "scripts/package_release.py").write_text("pass\n", encoding="utf-8")
 
             archive_path, digest = build_release(root)
@@ -30,7 +35,15 @@ class PackageReleaseTests(unittest.TestCase):
                 names = set(archive.namelist())
                 self.assertIn(f"{SKILL_NAME}/SKILL.md", names)
                 self.assertIn(f"{SKILL_NAME}/agents/openai.yaml", names)
-                self.assertIn(f"{SKILL_NAME}/scripts/validate_flat4.py", names)
+                self.assertIn(
+                    f"{SKILL_NAME}/scripts/hardware_realtime/validate_flat4.py", names
+                )
+                self.assertIn(
+                    f"{SKILL_NAME}/scripts/hardware_realtime/simulate_l4_microburst.py",
+                    names,
+                )
+                self.assertNotIn(f"{SKILL_NAME}/scripts/validate_flat4.py", names)
+                self.assertNotIn(f"{SKILL_NAME}/scripts/simulate_l4_microburst.py", names)
                 self.assertNotIn(f"{SKILL_NAME}/scripts/package_release.py", names)
 
 

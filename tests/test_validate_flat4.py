@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.validate_flat4 import analyze_python_ast, scan
+from scripts.hardware_realtime.validate_flat4 import analyze_python_ast, scan
 
 
 class Flat4ValidatorTests(unittest.TestCase):
