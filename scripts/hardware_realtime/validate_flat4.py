@@ -16,7 +16,6 @@ import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-
 SOURCE_EXTENSIONS = {
     ".c", ".cc", ".cpp", ".cs", ".go", ".h", ".hpp", ".java",
     ".js", ".jsx", ".kt", ".kts", ".mjs", ".py", ".rs", ".ts", ".tsx",

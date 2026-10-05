@@ -20,9 +20,8 @@ class MicroburstModelTests(unittest.TestCase):
 
     def test_invalid_input_is_rejected(self):
         for arguments in ((0, 100, 10), (1, 0, 10), (1, 100, 0)):
-            with self.subTest(arguments=arguments):
-                with self.assertRaises(ValueError):
-                    estimate(*arguments)
+            with self.subTest(arguments=arguments), self.assertRaises(ValueError):
+                estimate(*arguments)
 
 
 if __name__ == "__main__":

@@ -8,7 +8,6 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-
 DOCUMENT_EXTENSIONS = {".md", ".txt", ".toml", ".yaml", ".yml"}
 IGNORED_DIRECTORIES = {".git", ".local", "dist", "__pycache__"}
 BILINGUAL_FILES = {Path("README.md")}

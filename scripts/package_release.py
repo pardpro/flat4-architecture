@@ -7,7 +7,6 @@ import hashlib
 import zipfile
 from pathlib import Path
 
-
 SKILL_NAME = "f4a-engineering-governance"
 INCLUDED_FILES = ("SKILL.md", "VERSION")
 INCLUDED_DIRECTORIES = ("agents", "references", "scripts")
