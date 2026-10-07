@@ -211,11 +211,7 @@ class ImportExtractor(ast.NodeVisitor):
 
 def matches_module_boundary(imported_module: str, denied_module: str) -> bool:
     """Check if imported_module matches denied_module on exact module segments."""
-    if imported_module == denied_module:
-        return True
-    if imported_module.startswith(denied_module + "."):
-        return True
-    return False
+    return imported_module == denied_module or imported_module.startswith(denied_module + ".")
 
 
 def matches_path_boundary(target_path: Path, denied_path: Path) -> bool:
