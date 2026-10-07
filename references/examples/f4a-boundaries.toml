@@ -1,0 +1,41 @@
+# Example configuration for F4A Architectural Boundary Validator
+# This file is an illustrative reference, not a mandatory directory structure.
+# Each project declares its own domain boundaries based on its architectural choices.
+
+version = 1
+
+[project]
+root = "src"
+
+# Rule 1: Ensure core domain remains pure and free of frameworks / ORM / 3rd-party vendor SDKs
+[[rules]]
+name = "domain-layer-purity"
+from = "domain"
+
+deny_modules = [
+  "django",
+  "sqlalchemy",
+  "fastapi",
+  "stripe",
+  "openai"
+]
+
+deny_paths = [
+  "infrastructure",
+  "interfaces"
+]
+
+severity = "error"
+message = "Domain code must remain independent of frameworks, external SDKs, and infrastructure."
+
+# Rule 2: Prevent web controllers/handlers from directly accessing raw database storage
+[[rules]]
+name = "web-no-direct-db"
+from = "interfaces/web"
+
+deny_paths = [
+  "infrastructure/database"
+]
+
+severity = "error"
+message = "Web handlers must not directly depend on raw database infrastructure."
